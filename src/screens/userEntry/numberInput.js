@@ -12,7 +12,7 @@ import { useFonts } from "expo-font";
 
 import Logo from "../../images/logo/logo.svg";
 
-const NumberInput = () => {
+const NumberInput = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [countryCodeSelected, setCountryCodeSelected] = useState("91");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -29,7 +29,9 @@ const NumberInput = () => {
 
   const goButtonPressed = () => {
     const number = countryCodeSelected + phoneNumber;
-    console.log(number);
+    if (phoneNumber.length === 10) {
+      navigation.push("OtpInput", { phoneNumber: number });
+    }
   };
 
   return (
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 42,
-    width: 145,
+    width: 150,
     fontSize: 20,
     fontFamily: "MontserratSemiBold",
     letterSpacing: 2,

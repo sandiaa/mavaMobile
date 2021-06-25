@@ -6,6 +6,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import HomeScreen from "./src/screens/Home/homeScreen";
 import NumberInput from "./src/screens/userEntry/numberInput";
+import OtpInput from "./src/screens/userEntry/otpInput";
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,13 @@ const App = () => {
         <Stack.Screen
           name="NumberInput"
           component={NumberInput}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="OtpInput"
+          component={OtpInput}
           options={{
             headerShown: false,
           }}
