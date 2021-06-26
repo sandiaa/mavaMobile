@@ -7,14 +7,45 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./src/screens/Home/homeScreen";
 import NumberInput from "./src/screens/userEntry/numberInput";
 import OtpInput from "./src/screens/userEntry/otpInput";
+import PinInput from "./src/screens/userEntry/pinInput";
+import Landing from "./src/screens/userEntry/landing";
+import Settings from "./src/screens/userEntry/settings";
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="NumberInput">
-        <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Navigator initialRouteName="Landing">
+        <Stack.Screen
+          name="Settings"
+          component={Settings}
+          options={{
+            headerStyle: {
+              elevation: 0,
+              shadowOpacity: 0,
+              borderBottomWidth: 0,
+              backgroundColor: "#000000",
+            },
+            headerTintColor: "#ffffff",
+            title: "Settings",
+            headerTitleAlign: "center",
+          }}
+        />
+        <Stack.Screen
+          name="Landing"
+          component={Landing}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen
           name="NumberInput"
           component={NumberInput}
@@ -26,7 +57,24 @@ const App = () => {
           name="OtpInput"
           component={OtpInput}
           options={{
-            headerShown: false,
+            headerStyle: {
+              elevation: 0,
+              shadowOpacity: 0,
+              borderBottomWidth: 0,
+            },
+            title: "",
+          }}
+        />
+        <Stack.Screen
+          name="PinInput"
+          component={PinInput}
+          options={{
+            headerStyle: {
+              elevation: 0,
+              shadowOpacity: 0,
+              borderBottomWidth: 0,
+            },
+            title: "",
           }}
         />
       </Stack.Navigator>

@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   heading: {
     fontFamily: "MontserratExtraBold",
     fontSize: 25,
-    height: 30,
+    height: 35,
     marginTop: 10,
   },
   description: {
