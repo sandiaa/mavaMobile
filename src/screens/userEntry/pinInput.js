@@ -21,6 +21,7 @@ const PinInput = ({ route, navigation }) => {
   const [pin3, setPin3] = useState("");
   const [pin4, setPin4] = useState("");
   const [creatingUser, setCreatingUser] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const pin1Ref = useRef();
   const pin2Ref = useRef();
@@ -51,7 +52,7 @@ const PinInput = ({ route, navigation }) => {
             const stored = await storeUser(route.params.phoneNumber);
             stored ? navigation.push("Home") : null;
           },
-          (err) => {}
+          (err) => {setShowError(true); setCreatingUser(false)}
         );
     }
   };
@@ -116,6 +117,7 @@ const PinInput = ({ route, navigation }) => {
           <Text style={styles.buttonText}>GO</Text>
         </TouchableOpacity>
       )}
+      {showError? <Text style={styles.errorMsg}>Please try again later.</Text> : null}
     </View>
   );
 };
@@ -171,6 +173,10 @@ const styles = StyleSheet.create({
     letterSpacing: 1.88,
     color: "#ffffff",
   },
+  errorMsg:{
+    marginTop: 5,
+    fontFamily:"MontserratLight"
+    }
 });
 
 export default PinInput;

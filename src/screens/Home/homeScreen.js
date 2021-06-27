@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,8 +9,10 @@ import {
 import { useFonts } from "expo-font";
 
 import Logo from "../../images/logo/logo.svg";
+import AddTransaction from "../../images/icons/addTransaction.svg";
 
 const HomeScreen = ({ navigation }) => {
+  const [currentTab, setCurrentTab] = useState("promises");
   const [loaded] = useFonts({
     MontserratBold: require("../../../assets/fonts/Montserrat-Bold.ttf"),
     MontserratSemiBold: require("../../../assets/fonts/Montserrat-SemiBold.ttf"),
@@ -36,6 +38,55 @@ const HomeScreen = ({ navigation }) => {
           <Logo width={"100%"} height={"100%"} />
         </TouchableOpacity>
       </View>
+      <View style={styles.tabView}>
+        <TouchableOpacity
+          onPress={() => setCurrentTab("promises")}
+          style={[
+            styles.button,
+            currentTab == "promises"
+              ? { backgroundColor: "#000000" }
+              : { backgroundColor: "#ffffff" },
+          ]}
+        >
+          <Text
+            style={[
+              styles.buttonText,
+              currentTab == "promises"
+                ? { color: "#ffffff" }
+                : { color: "#000000" },
+            ]}
+          >
+            PROMISES
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setCurrentTab("receivables")}
+          style={[
+            styles.button,
+            currentTab == "promises"
+              ? { backgroundColor: "#ffffff" }
+              : { backgroundColor: "#000000" },
+          ]}
+        >
+          <Text
+            style={[
+              styles.buttonText,
+              currentTab == "promises"
+                ? { color: "#000000" }
+                : { color: "#ffffff" },
+            ]}
+          >
+            RECEIVABLES
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.currentTabView}></View>
+      <TouchableOpacity
+        onPress={() => navigation.push("ChooseContact")}
+        style={styles.addButton}
+      >
+        <AddTransaction height={"100%"} width={"100%"} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -69,6 +120,42 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginTop: 25,
     marginLeft: 75,
+  },
+  tabView: {
+    marginTop: 13,
+    height: 33,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    alignContent: "space-between",
+  },
+  button: {
+    height: 33,
+    width: 160,
+    justifyContent: "center",
+    borderWidth: 1,
+  },
+  buttonText: {
+    textAlign: "center",
+    fontFamily: "MontserratSemiBold",
+    fontSize: 17,
+    letterSpacing: 0.42,
+  },
+  currentTabView: {
+    height: "100%",
+    backgroundColor: "#ffffff",
+    marginTop: 20,
+    width: 320,
+    alignSelf: "center",
+  },
+  addButton: {
+    height: 70,
+    width: 70,
+    position: "absolute",
+    bottom: 55,
+    right: 40,
+    borderRadius: 35,
+    backgroundColor: "#000000",
   },
 });
 export default HomeScreen;

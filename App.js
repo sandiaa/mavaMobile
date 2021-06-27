@@ -10,6 +10,7 @@ import OtpInput from "./src/screens/userEntry/otpInput";
 import PinInput from "./src/screens/userEntry/pinInput";
 import Landing from "./src/screens/userEntry/landing";
 import Settings from "./src/screens/userEntry/settings";
+import ChooseContact from "./src/screens/createTransaction/chooseContact";
 
 const Stack = createStackNavigator();
 
@@ -17,6 +18,20 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Landing">
+        <Stack.Screen
+          name="ChooseContact"
+          component={ChooseContact}
+          options={{
+            headerStyle: {
+              elevation: 0,
+              shadowOpacity: 0,
+              borderBottomWidth: 0,
+              backgroundColor: "#000000",
+            },
+            headerTintColor: "#ffffff",
+            title: "",
+          }}
+        />
         <Stack.Screen
           name="Settings"
           component={Settings}
