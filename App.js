@@ -11,6 +11,7 @@ import PinInput from "./src/screens/userEntry/pinInput";
 import Landing from "./src/screens/userEntry/landing";
 import Settings from "./src/screens/userEntry/settings";
 import ChooseContact from "./src/screens/createTransaction/chooseContact";
+import EnterDetails from "./src/screens/createTransaction/enterDetails";
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,20 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Landing">
+        <Stack.Screen
+          name="EnterDetails"
+          component={EnterDetails}
+          options={{
+            headerStyle: {
+              elevation: 0,
+              shadowOpacity: 0,
+              borderBottomWidth: 0,
+              backgroundColor: "#000000",
+            },
+            headerTintColor: "#ffffff",
+            title: "",
+          }}
+        />
         <Stack.Screen
           name="ChooseContact"
           component={ChooseContact}

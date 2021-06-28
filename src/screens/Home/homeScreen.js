@@ -10,6 +10,7 @@ import { useFonts } from "expo-font";
 
 import Logo from "../../images/logo/logo.svg";
 import AddTransaction from "../../images/icons/addTransaction.svg";
+import SearchIcon from "../../images/icons/searchIcon.svg";
 
 const HomeScreen = ({ navigation }) => {
   const [currentTab, setCurrentTab] = useState("promises");
@@ -31,6 +32,12 @@ const HomeScreen = ({ navigation }) => {
           </Text>
           <Text style={[styles.headerTitle, { marginTop: 15 }]}>₹ 25000</Text>
         </View>
+        <TouchableOpacity
+          style={styles.searchIconView}
+          // onPress={() => navigation.push("Settings")}
+        >
+          <SearchIcon width={"100%"} height={"100%"} />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.logoView}
           onPress={() => navigation.push("Settings")}
@@ -119,7 +126,14 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginTop: 25,
-    marginLeft: 75,
+    marginLeft: 65,
+  },
+  searchIconView: {
+    width: 30,
+    height: 30,
+    borderRadius: 25,
+    marginTop: 35,
+    left: 50,
   },
   tabView: {
     marginTop: 13,
