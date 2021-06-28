@@ -14,7 +14,7 @@ import { useFonts } from "expo-font";
 import SearchIcon from "../../images/icons/searchIcon.svg";
 import ContactBlock from "./contactBlock";
 
-const ChooseContact = ({ navigation }) => {
+const SelectContact = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [inMemoryList, setInMemoryList] = useState([]);
   const [contactList, setContactList] = useState([]);
@@ -114,4 +114,4 @@ const styles = StyleSheet.create({
     height: 30,
   },
 });
-export default ChooseContact;
+export default SelectContact;
