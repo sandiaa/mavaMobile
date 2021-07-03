@@ -89,7 +89,7 @@ const HomeScreen = ({ navigation }) => {
       </View>
       <View style={styles.currentTabView}></View>
       <TouchableOpacity
-        onPress={() => navigation.push("ChooseContact")}
+        onPress={() => navigation.push("SelectContact")}
         style={styles.addButton}
       >
         <AddTransaction height={"100%"} width={"100%"} />

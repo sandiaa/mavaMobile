@@ -25,12 +25,10 @@ const OtpInput = ({ route, navigation }) => {
   const pw3Ref = useRef();
   const pw4Ref = useRef();
 
-
   const [loaded] = useFonts({
     MontserratExtraBold: require("../../../assets/fonts/Montserrat-ExtraBold.ttf"),
     MontserratSemiBold: require("../../../assets/fonts/Montserrat-SemiBold.ttf"),
-        MontserratLight: require("../../../assets/fonts/Montserrat-Light.ttf"),
-
+    MontserratLight: require("../../../assets/fonts/Montserrat-Light.ttf"),
   });
 
   if (!loaded) {
@@ -38,7 +36,7 @@ const OtpInput = ({ route, navigation }) => {
   }
 
   const goButtonPressed = () => {
-    setShowError(false) 
+    setShowError(false);
     if (pw1 != "" && pw2 != "" && pw3 != "" && pw4 != "") {
       setFetchingUser(true);
       axios.get(`/getUserId?number=${route.params.phoneNumber}`).then(
@@ -51,7 +49,10 @@ const OtpInput = ({ route, navigation }) => {
             navigation.push("PinInput", {
               phoneNumber: route.params.phoneNumber,
             });
-            else {setShowError(true); setFetchingUser(false)}
+          else {
+            setShowError(true);
+            setFetchingUser(false);
+          }
         }
       );
     }
@@ -116,7 +117,9 @@ const OtpInput = ({ route, navigation }) => {
           <Text style={styles.buttonText}>GO</Text>
         </TouchableOpacity>
       )}
-     {showError? <Text style={styles.errorMsg}>Please try again later.</Text> : null}
+      {showError ? (
+        <Text style={styles.errorMsg}>Please try again later.</Text>
+      ) : null}
     </View>
   );
 };
@@ -171,9 +174,9 @@ const styles = StyleSheet.create({
     letterSpacing: 1.88,
     color: "#ffffff",
   },
-  errorMsg:{
+  errorMsg: {
     marginTop: 5,
-    fontFamily:"MontserratLight"
-    }
+    fontFamily: "MontserratLight",
+  },
 });
 export default OtpInput;
