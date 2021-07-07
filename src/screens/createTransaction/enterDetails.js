@@ -9,19 +9,25 @@ import {
 import { useFonts } from "expo-font";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
+import { formatDate } from "../../helpers/formatDate";
+
 const EnterDetails = ({ navigation, route }) => {
   const [amt, setAmount] = useState("");
+  const [description, setDescription] = useState("");
   const [paymentMode, setPaymentMode] = useState("");
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [dateSelected, setDateSelected] = useState("");
 
   const onChange = (event, selectedDate) => {
-    console.log(event);
-    const currentDate = selectedDate || date;
-    if (event.type == "dismissed" && dateSelected != "")
-      setDateSelected(dateSelected);
-    else if (event.type == "set") setDateSelected(currentDate);
+    setShow(false);
+    if (selectedDate != undefined) {
+      setDateSelected(formatDate(selectedDate));
+    } else {
+      if (dateSelected != "") {
+        setDateSelected(dateSelected);
+      }
+    }
   };
 
   const amtRef = useRef();
@@ -32,12 +38,22 @@ const EnterDetails = ({ navigation, route }) => {
 
   const [loaded] = useFonts({
     MontserratSemiBold: require("../../../assets/fonts/Montserrat-SemiBold.ttf"),
+    MontserratLight: require("../../../assets/fonts/Montserrat-Light.ttf"),
   });
 
   if (!loaded) {
     return null;
   }
 
+  const doneButtonPressed = () => {
+    navigation.push("ProcessNewTx", {
+      name: route.params.data.firstName,
+      amount: amt,
+      description: description,
+      paymentMode: paymentMode,
+      dateSelected: dateSelected,
+    });
+  };
   return (
     <View style={styles.container}>
       <View style={styles.headerView}>
@@ -59,18 +75,16 @@ const EnterDetails = ({ navigation, route }) => {
       <Text style={[styles.title, { marginTop: 20 }]}>For</Text>
       <TextInput
         style={[
-          styles.textInput,
+          styles.descInput,
           {
             borderBottomColor: "#000000",
             borderBottomWidth: 2,
             width: 240,
           },
         ]}
-        value={amt}
-        onChangeText={(text) => setAmount(text)}
-        keyboardType={"number-pad"}
-        maxLength={6}
-        ref={amtRef}
+        value={description}
+        onChangeText={(text) => setDescription(text)}
+        maxLength={50}
       />
       <View style={styles.buttonView}>
         <TouchableOpacity
@@ -136,15 +150,27 @@ const EnterDetails = ({ navigation, route }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View>
-        <Text style={styles.dateHeader}>Set an expiry for your promise</Text>
-        <TouchableOpacity
-          style={styles.dateButton}
-          onPress={() => setShow(true)}
-        >
-          <Text style={styles.dateButtonText}>set date</Text>
-        </TouchableOpacity>
-      </View>
+      {paymentMode == "promise" ? (
+        <View>
+          {dateSelected == "" ? (
+            <Text style={styles.dateHeader}>
+              Set an expiry for your promise
+            </Text>
+          ) : (
+            <Text style={styles.dateHeader}>Expiring On: {dateSelected}</Text>
+          )}
+          <TouchableOpacity
+            style={styles.dateButton}
+            onPress={() => setShow(true)}
+          >
+            {dateSelected == "" ? (
+              <Text style={styles.dateButtonText}>set date</Text>
+            ) : (
+              <Text style={styles.dateButtonText}>Modify date</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       {show && (
         <DateTimePicker
@@ -155,6 +181,15 @@ const EnterDetails = ({ navigation, route }) => {
           minimumDate={new Date()}
         />
       )}
+      <TouchableOpacity
+        style={[
+          styles.goButton,
+          paymentMode == "promise" ? { marginTop: 127 } : { marginTop: 218 },
+        ]}
+        onPress={() => doneButtonPressed()}
+      >
+        <Text style={styles.goButtonText}>DONE</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -162,6 +197,21 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#ffffff",
     height: "100%",
+  },
+  goButton: {
+    width: 309,
+    height: 64,
+    backgroundColor: "#000000",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+  },
+  goButtonText: {
+    fontFamily: "MontserratSemiBold",
+    fontSize: 25,
+    letterSpacing: 1.88,
+    color: "#ffffff",
   },
   dateHeader: {
     fontFamily: "MontserratSemiBold",
@@ -217,6 +267,13 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratSemiBold",
     textAlign: "center",
     marginLeft: 15,
+  },
+  descInput: {
+    height: 80,
+    alignSelf: "center",
+    fontSize: 20,
+    fontFamily: "MontserratLight",
+    textAlign: "center",
   },
   textInput: {
     height: 80,

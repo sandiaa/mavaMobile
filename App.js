@@ -12,6 +12,7 @@ import Landing from "./src/screens/userEntry/landing";
 import Settings from "./src/screens/userEntry/settings";
 import SelectContact from "./src/screens/createTransaction/selectContact";
 import EnterDetails from "./src/screens/createTransaction/enterDetails";
+import ProcessNewTx from "./src/screens/payment/processNewTx";
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,13 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Landing">
+        <Stack.Screen
+          name="ProcessNewTx"
+          component={ProcessNewTx}
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen
           name="EnterDetails"
           component={EnterDetails}
