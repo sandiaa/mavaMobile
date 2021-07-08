@@ -1,8 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 
+import { createNewPromise } from "../../helpers/payment/createNewPromise";
+
 const ProcessNewTx = ({ navigation, route }) => {
+  const [txCreated, setTxCreated] = useState(false);
+
+  useEffect(() => {
+    const res = createNewPromise(route.params);
+    console.log(res);
+  }, []);
+
   const [loaded] = useFonts({
     MontserratBold: require("../../../assets/fonts/Montserrat-Bold.ttf"),
   });
@@ -10,9 +19,14 @@ const ProcessNewTx = ({ navigation, route }) => {
   if (!loaded) {
     return null;
   }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.titleName}>Paying {route.params.name}</Text>
+      {txCreated ? (
+        <Text style={styles.titleName}>Done</Text>
+      ) : (
+        <Text style={styles.titleName}>Paying {route.params.name}</Text>
+      )}
       <View style={styles.loaderView}>
         <ActivityIndicator size={120} color="#ffffff" />
       </View>

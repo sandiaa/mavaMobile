@@ -18,13 +18,16 @@ const EnterDetails = ({ navigation, route }) => {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [dateSelected, setDateSelected] = useState("");
+  const [timeStamp, setTimeStamp] = useState("");
 
   const onChange = (event, selectedDate) => {
     setShow(false);
     if (selectedDate != undefined) {
+      setTimeStamp(selectedDate.toString());
       setDateSelected(formatDate(selectedDate));
     } else {
       if (dateSelected != "") {
+        setTimeStamp(timeStamp);
         setDateSelected(dateSelected);
       }
     }
@@ -51,7 +54,9 @@ const EnterDetails = ({ navigation, route }) => {
       amount: amt,
       description: description,
       paymentMode: paymentMode,
-      dateSelected: dateSelected,
+      dateSelected: timeStamp,
+      receiverNumber: route.params.data.number,
+      receiverCurrency: "INR",
     });
   };
   return (
