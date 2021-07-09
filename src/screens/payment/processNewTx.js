@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
+import { useSelector } from "react-redux";
 
 import { createNewPromise } from "../../helpers/payment/createNewPromise";
 
 const ProcessNewTx = ({ navigation, route }) => {
   const [txCreated, setTxCreated] = useState(false);
-
-  useEffect(() => {
-    const res = createNewPromise(route.params);
+  const user = useSelector((state) => state);
+  const func = async () => {
+    const res = await createNewPromise(route.params, user.user.user);
     console.log(res);
-  }, []);
+  };
+  useEffect(() => {
+    func();
+  }, [user]);
 
   const [loaded] = useFonts({
     MontserratBold: require("../../../assets/fonts/Montserrat-Bold.ttf"),
