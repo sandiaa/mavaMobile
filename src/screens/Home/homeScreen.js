@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,21 +7,40 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useFonts } from "expo-font";
+import { useSelector } from "react-redux";
 
 import Logo from "../../images/logo/logo.svg";
 import AddTransaction from "../../images/icons/addTransaction.svg";
 import SearchIcon from "../../images/icons/searchIcon.svg";
+import PromisesScreen from "./promisesScreen";
+import ReceivablesScreen from "./receivablesScreen";
+import { formatTxList } from "../../helpers/formatTxList";
 
 const HomeScreen = ({ navigation }) => {
   const [currentTab, setCurrentTab] = useState("promises");
+  const user = useSelector((state) => state);
+  const [promisesList, setPromisesList] = useState([]);
+  const [receivablesList, setReceivablesList] = useState([]);
+
   const [loaded] = useFonts({
     MontserratBold: require("../../../assets/fonts/Montserrat-Bold.ttf"),
     MontserratSemiBold: require("../../../assets/fonts/Montserrat-SemiBold.ttf"),
   });
 
+  const fetchFormattedList = async () => {
+    const list = await formatTxList(user);
+    setPromisesList(list.promises);
+    setReceivablesList(list.receivables);
+  };
+  useEffect(() => {
+    fetchFormattedList();
+    return () => {};
+  }, [user]);
+
   if (!loaded) {
     return null;
   }
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={"#000000"} />
@@ -87,7 +106,13 @@ const HomeScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.currentTabView}></View>
+      <View style={styles.currentTabView}>
+        {currentTab == "promises" ? (
+          <PromisesScreen data={promisesList} />
+        ) : (
+          <ReceivablesScreen data={receivablesList} />
+        )}
+      </View>
       <TouchableOpacity
         onPress={() => navigation.push("SelectContact")}
         style={styles.addButton}
@@ -166,8 +191,8 @@ const styles = StyleSheet.create({
     height: 70,
     width: 70,
     position: "absolute",
-    bottom: 55,
-    right: 40,
+    bottom: 45,
+    right: 25,
     borderRadius: 35,
     backgroundColor: "#000000",
   },

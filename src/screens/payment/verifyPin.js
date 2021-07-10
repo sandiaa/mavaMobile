@@ -9,26 +9,28 @@ import {
 } from "react-native";
 import { useFonts } from "expo-font";
 import axios from "../../apis/baseURL";
+import "react-native-get-random-values";
+import { useSelector } from "react-redux";
 
 import Logo from "../../images/logo/logo.svg";
-import { storeUser } from "../../helpers/storeUser";
 
-const OtpInput = ({ route, navigation }) => {
-  const [pw1, setPw1] = useState("");
-  const [pw2, setPw2] = useState("");
-  const [pw3, setPw3] = useState("");
-  const [pw4, setPw4] = useState("");
-  const [fetchingUser, setFetchingUser] = useState(false);
+const VerifyPin = ({ route, navigation }) => {
+  const [pin1, setPin1] = useState("");
+  const [pin2, setPin2] = useState("");
+  const [pin3, setPin3] = useState("");
+  const [pin4, setPin4] = useState("");
+  const [verifyingPin, setVerifyingPin] = useState(false);
   const [showError, setShowError] = useState(false);
-  const pw1Ref = useRef();
-  const pw2Ref = useRef();
-  const pw3Ref = useRef();
-  const pw4Ref = useRef();
+  const user = useSelector((state) => state);
+
+  const pin1Ref = useRef();
+  const pin2Ref = useRef();
+  const pin3Ref = useRef();
+  const pin4Ref = useRef();
 
   const [loaded] = useFonts({
     MontserratExtraBold: require("../../../assets/fonts/Montserrat-ExtraBold.ttf"),
     MontserratSemiBold: require("../../../assets/fonts/Montserrat-SemiBold.ttf"),
-    MontserratLight: require("../../../assets/fonts/Montserrat-Light.ttf"),
   });
 
   if (!loaded) {
@@ -37,22 +39,17 @@ const OtpInput = ({ route, navigation }) => {
 
   const goButtonPressed = () => {
     setShowError(false);
-    if (pw1 != "" && pw2 != "" && pw3 != "" && pw4 != "") {
-      setFetchingUser(true);
-      axios.get(`/getUserId?number=${route.params.phoneNumber}`).then(
-        async (res) => {
-          const stored = await storeUser(route.params.phoneNumber);
-          stored ? navigation.push("Landing") : null;
+    if (pin1 != "" && pin2 != "" && pin3 != "" && pin4 != "") {
+      setVerifyingPin(true);
+      const pin = pin1 + pin2 + pin3 + pin4;
+      axios.get(`/verifyPin?number=${user.user.user}&pin=${pin}`).then(
+        (res) => {
+          route.params.senderNumber = user.user.user;
+          navigation.push("CreateNewTx", route.params);
         },
         (err) => {
-          if (err.response.status == "404")
-            navigation.push("PinInput", {
-              phoneNumber: route.params.phoneNumber,
-            });
-          else {
-            setShowError(true);
-            setFetchingUser(false);
-          }
+          setShowError(true);
+          setVerifyingPin(false);
         }
       );
     }
@@ -63,49 +60,50 @@ const OtpInput = ({ route, navigation }) => {
       <View style={styles.logo}>
         <Logo width={"100%"} height={"100%"} />
       </View>
-      <Text style={styles.heading}>Let's Verify you</Text>
-      <View style={styles.pwView}>
+      <Text style={styles.heading}>Enter your 4- digit transaction pin</Text>
+      <View style={styles.pinView}>
         <TextInput
-          style={styles.pw}
+          style={styles.pin}
           maxLength={1}
           keyboardType={"number-pad"}
-          ref={pw1Ref}
+          ref={pin1Ref}
           onChangeText={(text) => {
-            setPw1(text);
-            text ? pw2Ref.current.focus() : null;
+            setPin1(text);
+            text ? pin2Ref.current.focus() : null;
           }}
         />
         <TextInput
-          style={styles.pw}
+          style={styles.pin}
           maxLength={1}
           keyboardType={"number-pad"}
-          ref={pw2Ref}
+          ref={pin2Ref}
           onChangeText={(text) => {
-            setPw2(text);
-            text ? pw3Ref.current.focus() : null;
+            setPin2(text);
+            text ? pin3Ref.current.focus() : null;
           }}
         />
         <TextInput
-          style={styles.pw}
+          style={styles.pin}
           maxLength={1}
           keyboardType={"number-pad"}
-          ref={pw3Ref}
+          ref={pin3Ref}
           onChangeText={(text) => {
-            setPw3(text);
-            text ? pw4Ref.current.focus() : null;
+            setPin3(text);
+            text ? pin4Ref.current.focus() : null;
           }}
         />
         <TextInput
-          style={styles.pw}
+          style={styles.pin}
           maxLength={1}
           keyboardType={"number-pad"}
-          ref={pw4Ref}
+          ref={pin4Ref}
           onChangeText={(text) => {
-            setPw4(text);
+            setPin4(text);
           }}
         />
       </View>
-      {fetchingUser ? (
+
+      {verifyingPin ? (
         <View style={styles.button}>
           <ActivityIndicator size={"large"} color="#ffffff" />
         </View>
@@ -117,9 +115,7 @@ const OtpInput = ({ route, navigation }) => {
           <Text style={styles.buttonText}>GO</Text>
         </TouchableOpacity>
       )}
-      {showError ? (
-        <Text style={styles.errorMsg}>Please try again later.</Text>
-      ) : null}
+      {showError ? <Text style={styles.errorMsg}>Pin incorrect.</Text> : null}
     </View>
   );
 };
@@ -140,14 +136,15 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratSemiBold",
     fontSize: 25,
     letterSpacing: 2.5,
+    textAlign: "center",
   },
-  pwView: {
+  pinView: {
     flexDirection: "row",
-    marginTop: 42,
+    marginTop: 35,
     width: 250,
     justifyContent: "space-evenly",
   },
-  pw: {
+  pin: {
     height: 50,
     width: 50,
     borderRadius: 10,
@@ -179,4 +176,5 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratLight",
   },
 });
-export default OtpInput;
+
+export default VerifyPin;

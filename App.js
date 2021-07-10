@@ -17,7 +17,8 @@ import Landing from "./src/screens/userEntry/landing";
 import Settings from "./src/screens/userEntry/settings";
 import SelectContact from "./src/screens/createTransaction/selectContact";
 import EnterDetails from "./src/screens/createTransaction/enterDetails";
-import ProcessNewTx from "./src/screens/payment/processNewTx";
+import CreateNewTx from "./src/screens/payment/createNewTx";
+import VerifyPin from "./src/screens/payment/verifyPin";
 
 const Stack = createStackNavigator();
 const store = createStore(rootReducer, applyMiddleware(thunk));
@@ -28,8 +29,20 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Landing">
           <Stack.Screen
-            name="ProcessNewTx"
-            component={ProcessNewTx}
+            name="VerifyPin"
+            component={VerifyPin}
+            options={{
+              headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+              },
+              title: "",
+            }}
+          />
+          <Stack.Screen
+            name="CreateNewTx"
+            component={CreateNewTx}
             options={{
               headerShown: false,
             }}

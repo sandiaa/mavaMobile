@@ -10,8 +10,10 @@ import { useFonts } from "expo-font";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { formatDate } from "../../helpers/formatDate";
+import axios from "../../apis/baseURL";
 
 const EnterDetails = ({ navigation, route }) => {
+  const [receiverName, setReceiverName] = useState("");
   const [amt, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [paymentMode, setPaymentMode] = useState("");
@@ -35,9 +37,16 @@ const EnterDetails = ({ navigation, route }) => {
 
   const amtRef = useRef();
 
-  // useEffect(() => {
-  //   amtRef.current.focus();
-  // }, []);
+  useEffect(() => {
+    axios
+      .get(
+        `/getUserId?number=${route.params.data.number.replace(/[^0-9]/g, "")}`
+      )
+      .then(
+        (res) => setReceiverName(res.data.user.name),
+        (err) => {}
+      );
+  }, []);
 
   const [loaded] = useFonts({
     MontserratSemiBold: require("../../../assets/fonts/Montserrat-SemiBold.ttf"),
@@ -49,7 +58,7 @@ const EnterDetails = ({ navigation, route }) => {
   }
 
   const doneButtonPressed = () => {
-    navigation.push("ProcessNewTx", {
+    const data = {
       name: route.params.data.firstName,
       amount: amt,
       description: description,
@@ -57,7 +66,9 @@ const EnterDetails = ({ navigation, route }) => {
       dateSelected: timeStamp,
       receiverNumber: route.params.data.number,
       receiverCurrency: "INR",
-    });
+      receiverName: receiverName,
+    };
+    navigation.push("VerifyPin", data);
   };
   return (
     <View style={styles.container}>
