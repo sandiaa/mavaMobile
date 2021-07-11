@@ -1,4 +1,5 @@
-export const formatDate = (dateSelected) => {
+export const formatDate = (date) => {
+  const dateSelected = new Date(date);
   const months = [
     "Jan",
     "Feb",
@@ -15,7 +16,6 @@ export const formatDate = (dateSelected) => {
   ];
   var dd = String(dateSelected.getDate()).padStart(2, "0");
   var yyyy = dateSelected.getFullYear();
-  `1`;
   var today = dd + " " + months[dateSelected.getMonth()] + ", " + yyyy;
 
   return today;

@@ -24,6 +24,15 @@ const PromisesScreen = ({ navigation, data }) => {
           return <View style={styles.itemSeperator} />;
         }}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => {
+          return (
+            <View>
+              <Text>
+                You have not promised yet! click the icon below to create.
+              </Text>
+            </View>
+          );
+        }}
       />
     </View>
   );

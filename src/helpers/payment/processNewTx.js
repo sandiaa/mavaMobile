@@ -11,6 +11,7 @@ export const createNewPromise = async (txDetails) => {
     receiver: txDetails.receiverNumber.replace(/[^0-9]/g, ""),
     paymentMode: txDetails.paymentMode,
     receiverName: txDetails.receiverName,
+    expiry: txDetails.dateSelected,
   };
   var status = Boolean();
   await axios.post("/createNewTx", data).then(
@@ -33,6 +34,7 @@ export const createDeliverNow = async (txDetails, user) => {
     sender: txDetails.senderNumber,
     receiver: txDetails.receiverNumber.replace(/[^0-9]/g, ""),
     paymentMode: txDetails.paymentMode,
+    receiverName: txDetails.receiverName,
   };
   var status = Boolean();
   await axios.post("/createDeliverNowTx", data).then(

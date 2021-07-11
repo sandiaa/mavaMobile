@@ -181,11 +181,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.42,
   },
   currentTabView: {
-    height: "100%",
+    height: "83%",
     backgroundColor: "#ffffff",
     marginTop: 20,
     width: 320,
     alignSelf: "center",
+    bottom: 10,
   },
   addButton: {
     height: 70,

@@ -22,11 +22,11 @@ const EnterDetails = ({ navigation, route }) => {
   const [dateSelected, setDateSelected] = useState("");
   const [timeStamp, setTimeStamp] = useState("");
 
-  const onChange = (event, selectedDate) => {
+  const onChange = (selectedDate) => {
     setShow(false);
     if (selectedDate != undefined) {
-      setTimeStamp(selectedDate.toString());
-      setDateSelected(formatDate(selectedDate));
+      setTimeStamp(selectedDate.nativeEvent.timestamp);
+      setDateSelected(formatDate(selectedDate.nativeEvent.timestamp));
     } else {
       if (dateSelected != "") {
         setTimeStamp(timeStamp);
@@ -68,6 +68,7 @@ const EnterDetails = ({ navigation, route }) => {
       receiverCurrency: "INR",
       receiverName: receiverName,
     };
+
     navigation.push("VerifyPin", data);
   };
   return (
@@ -192,7 +193,7 @@ const EnterDetails = ({ navigation, route }) => {
         <DateTimePicker
           value={date}
           mode={"date"}
-          display="spinner"
+          display="default"
           onChange={onChange}
           minimumDate={new Date()}
         />
