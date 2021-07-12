@@ -63,7 +63,7 @@ const EnterDetails = ({ navigation, route }) => {
       amount: amt,
       description: description,
       paymentMode: paymentMode,
-      dateSelected: timeStamp,
+      dateSelected: timeStamp.toString(),
       receiverNumber: route.params.data.number,
       receiverCurrency: "INR",
       receiverName: receiverName,

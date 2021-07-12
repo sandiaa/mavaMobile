@@ -5,6 +5,7 @@ import {
   StyleSheet,
   StatusBar,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useFonts } from "expo-font";
 import { useSelector } from "react-redux";
@@ -21,6 +22,7 @@ const HomeScreen = ({ navigation }) => {
   const user = useSelector((state) => state);
   const [promisesList, setPromisesList] = useState([]);
   const [receivablesList, setReceivablesList] = useState([]);
+  const [listLoaded, setListLoaded] = useState(false);
 
   const [loaded] = useFonts({
     MontserratBold: require("../../../assets/fonts/Montserrat-Bold.ttf"),
@@ -31,10 +33,13 @@ const HomeScreen = ({ navigation }) => {
     const list = await formatTxList(user);
     setPromisesList(list.promises);
     setReceivablesList(list.receivables);
+    setListLoaded(true);
   };
   useEffect(() => {
     fetchFormattedList();
-    return () => {};
+    return () => {
+      setListLoaded(false);
+    };
   }, [user]);
 
   if (!loaded) {
@@ -106,13 +111,19 @@ const HomeScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.currentTabView}>
-        {currentTab == "promises" ? (
-          <PromisesScreen data={promisesList} />
-        ) : (
-          <ReceivablesScreen data={receivablesList} />
-        )}
-      </View>
+      {listLoaded ? (
+        <View style={styles.currentTabView}>
+          {currentTab == "promises" ? (
+            <PromisesScreen data={promisesList} navigation={navigation} />
+          ) : (
+            <ReceivablesScreen data={receivablesList} />
+          )}
+        </View>
+      ) : (
+        <View style={styles.loaderView}>
+          <ActivityIndicator size={"large"} color="#000000" />
+        </View>
+      )}
       <TouchableOpacity
         onPress={() => navigation.push("SelectContact")}
         style={styles.addButton}
@@ -196,6 +207,9 @@ const styles = StyleSheet.create({
     right: 25,
     borderRadius: 35,
     backgroundColor: "#000000",
+  },
+  loaderView: {
+    marginTop: 100,
   },
 });
 export default HomeScreen;

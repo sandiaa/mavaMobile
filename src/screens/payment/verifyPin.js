@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -27,6 +27,13 @@ const VerifyPin = ({ route, navigation }) => {
   const pin2Ref = useRef();
   const pin3Ref = useRef();
   const pin4Ref = useRef();
+
+  useEffect(() => {
+    return () => {
+      setShowError(false);
+      setVerifyingPin(false);
+    };
+  }, []);
 
   const [loaded] = useFonts({
     MontserratExtraBold: require("../../../assets/fonts/Montserrat-ExtraBold.ttf"),

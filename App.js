@@ -19,6 +19,7 @@ import SelectContact from "./src/screens/createTransaction/selectContact";
 import EnterDetails from "./src/screens/createTransaction/enterDetails";
 import CreateNewTx from "./src/screens/payment/createNewTx";
 import VerifyPin from "./src/screens/payment/verifyPin";
+import TxDetail from "./src/screens/txDisplay/txDetail";
 
 const Stack = createStackNavigator();
 const store = createStore(rootReducer, applyMiddleware(thunk));
@@ -28,6 +29,21 @@ const App = () => {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Landing">
+          <Stack.Screen
+            name="TxDetail"
+            component={TxDetail}
+            options={{
+              headerStyle: {
+                elevation: 0,
+                shadowOpacity: 0,
+                borderBottomWidth: 0,
+                height: 30,
+                backgroundColor: "#000000",
+              },
+              headerTintColor: "#ffffff",
+              title: "",
+            }}
+          />
           <Stack.Screen
             name="VerifyPin"
             component={VerifyPin}

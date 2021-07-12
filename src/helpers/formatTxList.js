@@ -9,8 +9,12 @@ export const formatTxList = async (user) => {
     data.forEach((element) => {
       if (element.data.newTransaction != undefined) {
         if (element.data.newTransaction.senderNumber == user.user.user) {
+          element.data.newTransaction.txId = element.id;
+          element.data.newTransaction.sender = true;
           promises.push(element.data.newTransaction);
         } else {
+          element.data.newTransaction.txId = element.id;
+          element.data.newTransaction.sender = false;
           receivables.push(element.data.newTransaction);
         }
       }

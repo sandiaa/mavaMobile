@@ -6,10 +6,18 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
+import { useFonts } from "expo-font";
 
-import TxDisplayBlock from "./txDisplayBlock";
+import TxDisplayBlock from "../txDisplay/txDisplayBlock";
 
 const PromisesScreen = ({ navigation, data }) => {
+  const [loaded] = useFonts({
+    MontserratSemiBold: require("../../../assets/fonts/Montserrat-SemiBold.ttf"),
+  });
+
+  if (!loaded) {
+    return null;
+  }
   const renderItem = ({ item }) => (
     <TxDisplayBlock item={item} navigation={navigation} />
   );
@@ -27,8 +35,8 @@ const PromisesScreen = ({ navigation, data }) => {
         ListEmptyComponent={() => {
           return (
             <View>
-              <Text>
-                You have not promised yet! click the icon below to create.
+              <Text style={styles.noPromises}>
+                You have not promised yet! click the plus icon below to create.
               </Text>
             </View>
           );
@@ -44,6 +52,12 @@ const styles = StyleSheet.create({
   },
   itemSeperator: {
     height: 18,
+  },
+  noPromises: {
+    fontFamily: "MontserratBold",
+    fontSize: 15,
+    textAlign: "center",
+    marginTop: 150,
   },
 });
 
