@@ -30,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
   });
 
   const fetchFormattedList = async () => {
-    const list = await formatTxList(user);
+    const list = await formatTxList(JSON.parse(user.user.user));
     setPromisesList(list.promises);
     setReceivablesList(list.receivables);
     setListLoaded(true);
@@ -116,7 +116,7 @@ const HomeScreen = ({ navigation }) => {
           {currentTab == "promises" ? (
             <PromisesScreen data={promisesList} navigation={navigation} />
           ) : (
-            <ReceivablesScreen data={receivablesList} />
+            <ReceivablesScreen data={receivablesList} navigation={navigation} />
           )}
         </View>
       ) : (

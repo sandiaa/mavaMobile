@@ -39,10 +39,20 @@ const OtpInput = ({ route, navigation }) => {
     setShowError(false);
     if (pw1 != "" && pw2 != "" && pw3 != "" && pw4 != "") {
       setFetchingUser(true);
-      axios.get(`/getUserId?number=${route.params.phoneNumber}`).then(
+      axios.get(`/userDetail?number=${route.params.phoneNumber}`).then(
         async (res) => {
-          const stored = await storeUser(route.params.phoneNumber);
-          stored ? navigation.push("Landing") : null;
+          const stored = await storeUser(
+            res.data.user.name,
+            res.data.user.number
+          );
+          stored
+            ? navigation.push("Landing", {
+                user: {
+                  name: res.data.user.name,
+                  number: res.data.user.number,
+                },
+              })
+            : null;
         },
         (err) => {
           if (err.response.status == "404")

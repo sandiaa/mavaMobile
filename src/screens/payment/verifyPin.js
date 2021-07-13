@@ -21,7 +21,8 @@ const VerifyPin = ({ route, navigation }) => {
   const [pin4, setPin4] = useState("");
   const [verifyingPin, setVerifyingPin] = useState(false);
   const [showError, setShowError] = useState(false);
-  const user = useSelector((state) => state);
+  const getuser = useSelector((state) => state);
+  const user = JSON.parse(getuser.user.user);
 
   const pin1Ref = useRef();
   const pin2Ref = useRef();
@@ -49,9 +50,10 @@ const VerifyPin = ({ route, navigation }) => {
     if (pin1 != "" && pin2 != "" && pin3 != "" && pin4 != "") {
       setVerifyingPin(true);
       const pin = pin1 + pin2 + pin3 + pin4;
-      axios.get(`/verifyPin?number=${user.user.user}&pin=${pin}`).then(
+      axios.get(`/verifyPin?number=${user.number}&pin=${pin}`).then(
         (res) => {
-          route.params.senderNumber = user.user.user;
+          route.params.senderNumber = user.number;
+          route.params.senderName = user.name;
           navigation.push("CreateNewTx", route.params);
         },
         (err) => {

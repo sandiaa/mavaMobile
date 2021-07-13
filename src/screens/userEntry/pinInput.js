@@ -54,7 +54,7 @@ const PinInput = ({ route, navigation }) => {
         })
         .then(
           async (res) => {
-            const stored = await storeUser(route.params.phoneNumber);
+            const stored = await storeUser(name, route.params.phoneNumber);
             stored ? navigation.push("Landing") : null;
           },
           (err) => {

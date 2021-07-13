@@ -1,14 +1,14 @@
 import { fetchTxList } from "./fetchTxList";
 
 export const formatTxList = async (user) => {
-  const data = await fetchTxList(user.user.user);
+  const data = await fetchTxList(user.number);
 
   var promises = [];
   var receivables = [];
   if (data != []) {
     data.forEach((element) => {
       if (element.data.newTransaction != undefined) {
-        if (element.data.newTransaction.senderNumber == user.user.user) {
+        if (element.data.newTransaction.senderNumber == user.number) {
           element.data.newTransaction.txId = element.id;
           element.data.newTransaction.sender = true;
           promises.push(element.data.newTransaction);
