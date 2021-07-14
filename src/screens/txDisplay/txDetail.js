@@ -5,10 +5,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { useFonts } from "expo-font";
 import { formatDate } from "../../helpers/formatDate";
 import { formatTxStatus } from "../../helpers/formatTxStatus";
+import { txDetailButtonFunc } from "../../helpers/txDetailButtonFunc";
 
 import NotActive from "../../images/icons/notActive.svg";
 import Rejected from "../../images/icons/rejected.svg";
@@ -22,6 +24,7 @@ const TxDetail = ({ navigation, route }) => {
   const [detailsLoaded, setDetailsLoaded] = useState(false);
   const [txStatus, setTxStatus] = useState({});
   const [finalStatus, setFinalStatus] = useState("");
+  const [txButtonPressed, setTxButtonPressed] = useState(false);
 
   const setTxStatusState = (status) => {
     const txState = formatTxStatus(status);
@@ -29,13 +32,18 @@ const TxDetail = ({ navigation, route }) => {
   };
 
   const fetchData = async () => {
-    await axios.get(`/getTxStatus?id=${txItem.txId}`).then((res) => {
+    await axios.get(`/getTxStatus?id=${txItem.assetId}`).then((res) => {
       setDetailsLoaded(true);
+      var finalStatus = String();
+      txItem.txId = res.data.message.id;
       if (txItem.sender) {
-        const finalStatus = res.data.message.metadata.senderStatus;
-        setFinalStatus(finalStatus);
-        setTxStatusState(finalStatus);
+        finalStatus = res.data.message.metadata.senderStatus;
+      } else {
+        finalStatus = res.data.message.metadata.receiverStatus;
       }
+      setFinalStatus(finalStatus);
+      setTxStatusState(finalStatus);
+
       (err) => {
         setDetailsLoaded(true);
         console.log(err);
@@ -47,6 +55,7 @@ const TxDetail = ({ navigation, route }) => {
     fetchData();
     return () => {
       setDetailsLoaded(false);
+      setTxButtonPressed(false);
     };
   }, [txItem]);
 
@@ -61,6 +70,7 @@ const TxDetail = ({ navigation, route }) => {
   if (!loaded) {
     return null;
   }
+
   const StatusBlock = (item) => {
     return (
       <View style={styles.statusBlock}>
@@ -79,27 +89,123 @@ const TxDetail = ({ navigation, route }) => {
       </View>
     );
   };
-  const renderButtonView = () => {
-    return (
-      <View style={styles.buttonView}>
-        <TouchableOpacity style={styles.acceptButton}>
-          <Text style={[styles.buttonText, { color: "#ffffff" }]}>ACCEPT</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.rejectButton}>
-          <Text style={[styles.buttonText, { color: "#000000" }]}>REJECT</Text>
-        </TouchableOpacity>
-      </View>
-    );
+
+  const buttonPressed = async (buttonName) => {
+    setTxButtonPressed(true);
+    const result = await txDetailButtonFunc(buttonName, txItem);
+    var status = String();
+
+    if (result) {
+      if (buttonName == "accept") status = "WORKING";
+      else if (buttonName == "reject") status = "REJECTED";
+      else if (buttonName == "submit") status = "REVIEWING";
+      else if (buttonName == "done") status = "DELIVERED";
+      else if (buttonName == "rework") status = "REWORK";
+    }
+    setFinalStatus(status);
+    setTxStatusState(status);
+    setTxButtonPressed(false);
   };
+
+  const renderButtonView = () => {
+    if (txButtonPressed) {
+      return (
+        <View
+          style={[
+            styles.buttonView,
+            {
+              height: 64,
+              width: 150,
+              backgroundColor: "#000000",
+              justifyContent: "center",
+              borderRadius: 10,
+              alignSelf: "center",
+            },
+          ]}
+        >
+          <ActivityIndicator size={"large"} color={"#ffffff"} />
+        </View>
+      );
+    } else {
+      if (finalStatus == "PENDING") {
+        return (
+          <View style={styles.buttonView}>
+            <TouchableOpacity
+              style={styles.acceptButton}
+              onPress={() => buttonPressed("accept")}
+            >
+              <Text style={[styles.buttonText, { color: "#ffffff" }]}>
+                ACCEPT
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.rejectButton}
+              onPress={() => buttonPressed("reject")}
+            >
+              <Text style={[styles.buttonText, { color: "#000000" }]}>
+                REJECT
+              </Text>
+            </TouchableOpacity>
+          </View>
+        );
+      } else if (
+        (finalStatus == "WORKING" || finalStatus == "REWORK") &&
+        !txItem.sender
+      ) {
+        return (
+          <View style={styles.buttonView}>
+            <TouchableOpacity
+              style={styles.acceptButton}
+              onPress={() => buttonPressed("submit")}
+            >
+              <Text style={[styles.buttonText, { color: "#ffffff" }]}>
+                SUBMIT
+              </Text>
+            </TouchableOpacity>
+          </View>
+        );
+      } else if (finalStatus == "TO REVIEW") {
+        return (
+          <View style={styles.buttonView}>
+            <TouchableOpacity
+              style={styles.acceptButton}
+              onPress={() => buttonPressed("done")}
+            >
+              <Text style={[styles.buttonText, { color: "#ffffff" }]}>
+                DONE
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.rejectButton}
+              onPress={() => buttonPressed("rework")}
+            >
+              <Text style={[styles.buttonText, { color: "#000000" }]}>
+                REWORK
+              </Text>
+            </TouchableOpacity>
+          </View>
+        );
+      }
+    }
+  };
+
   return (
     <View style={styles.mainView}>
       {detailsLoaded ? (
         <View>
           <View style={styles.headerView}>
             <Text style={styles.title}>
-              {txItem.sender ? "You are paying" : "You are paid by"}
+              {txItem.sender
+                ? finalStatus == "DELIVERED"
+                  ? "You paid"
+                  : "you are paying"
+                : finalStatus == "REQUESTED" || finalStatus == "PENDING"
+                ? "Requested by"
+                : "Paid by"}
             </Text>
-            <Text style={styles.titleName}>{txItem.receiverName}</Text>
+            <Text style={styles.titleName}>
+              {txItem.sender ? txItem.receiverName : txItem.senderName}
+            </Text>
           </View>
           <Text style={styles.amount}>
             {txItem.receiverCurrency == "INR" ? "₹" : "£"} {txItem.amount}
@@ -120,20 +226,25 @@ const TxDetail = ({ navigation, route }) => {
             </View>
           )}
           <Text style={styles.descTitle}>Status</Text>
-          <View style={styles.statusView}>
-            <View style={styles.statusSubView}>
-              <StatusBlock status={"Requested"} value={txStatus.requested} />
-              <StatusBlock status={"Accepted"} value={txStatus.accepted} />
+          {txItem.paymentMode == "deliver" ? (
+            <Text style={styles.desc}>Delivered</Text>
+          ) : (
+            <View style={styles.statusView}>
+              <View style={styles.statusSubView}>
+                <StatusBlock status={"Requested"} value={txStatus.requested} />
+                <StatusBlock status={"Accepted"} value={txStatus.accepted} />
+              </View>
+              <View style={styles.statusSubView}>
+                <StatusBlock status={"Submitted"} value={txStatus.submitted} />
+                <StatusBlock status={"Reviewed"} value={txStatus.reviewed} />
+              </View>
+              <View style={styles.statusSubView}>
+                <StatusBlock status={"Task Done"} value={txStatus.taskDone} />
+                <StatusBlock status={"Delivered"} value={txStatus.delivered} />
+              </View>
             </View>
-            <View style={styles.statusSubView}>
-              <StatusBlock status={"Submitted"} value={txStatus.submitted} />
-              <StatusBlock status={"Reviewed"} value={txStatus.reviewed} />
-            </View>
-            <View style={styles.statusSubView}>
-              <StatusBlock status={"Task Done"} value={txStatus.taskDone} />
-              <StatusBlock status={"Delivered"} value={txStatus.delivered} />
-            </View>
-          </View>
+          )}
+
           {renderButtonView()}
         </View>
       ) : (
@@ -239,6 +350,7 @@ const styles = StyleSheet.create({
     height: 16,
     marginLeft: 20,
     borderRadius: 8,
+    marginTop: 3,
   },
   statusText: {
     fontSize: 15,

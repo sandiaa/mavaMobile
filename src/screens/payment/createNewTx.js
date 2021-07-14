@@ -31,7 +31,6 @@ const CreateNewTx = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log(route.params);
     func();
     return () => {
       setTxCreated(false);

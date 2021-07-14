@@ -17,7 +17,10 @@ const TxDisplayBlock = ({ item, navigation }) => {
     <TouchableOpacity onPress={() => navigation.push("TxDetail", item)}>
       <View style={styles.mainBlock}>
         <View style={styles.leftView}>
-          <Text style={styles.name}>{item.receiverName}</Text>
+          <Text style={styles.name}>
+            {item.sender ? item.receiverName : item.senderName}
+          </Text>
+          <Text style={styles.description}>{item.description}</Text>
           <Text style={styles.amount}>
             {item.receiverCurrency == "INR" ? "₹" : "£"} {item.amount}
           </Text>
@@ -57,14 +60,20 @@ const styles = StyleSheet.create({
     letterSpacing: 0.42,
     fontFamily: "MontserratSemiBold",
     marginLeft: 15,
-    marginTop: 20,
+    marginTop: 10,
   },
   amount: {
-    fontSize: 13,
+    fontSize: 14,
+    letterSpacing: 1.3,
+    fontFamily: "MontserratSemiBold",
+    marginLeft: 15,
+    marginTop: 7,
+  },
+  description: {
+    fontSize: 12,
     letterSpacing: 1.3,
     fontFamily: "MontserratRegular",
     marginLeft: 15,
-    marginTop: 7,
   },
   statusView: {
     marginTop: 19,
