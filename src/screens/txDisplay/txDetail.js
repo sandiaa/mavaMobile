@@ -25,6 +25,7 @@ const TxDetail = ({ navigation, route }) => {
   const [txStatus, setTxStatus] = useState({});
   const [finalStatus, setFinalStatus] = useState("");
   const [txButtonPressed, setTxButtonPressed] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(false);
 
   const setTxStatusState = (status) => {
     const txState = formatTxStatus(status);
@@ -35,6 +36,7 @@ const TxDetail = ({ navigation, route }) => {
     await axios.get(`/getTxStatus?id=${txItem.assetId}`).then((res) => {
       setDetailsLoaded(true);
       var finalStatus = String();
+
       txItem.txId = res.data.message.id;
       if (txItem.sender) {
         finalStatus = res.data.message.metadata.senderStatus;
@@ -46,7 +48,6 @@ const TxDetail = ({ navigation, route }) => {
 
       (err) => {
         setDetailsLoaded(true);
-        console.log(err);
       };
     });
   };
@@ -56,11 +57,15 @@ const TxDetail = ({ navigation, route }) => {
     return () => {
       setDetailsLoaded(false);
       setTxButtonPressed(false);
+      setErrorMsg(false);
+      setTxStatus({});
+      setFinalStatus("");
     };
   }, [txItem]);
 
   const [loaded] = useFonts({
     MontserratSemiBold: require("../../../assets/fonts/Montserrat-SemiBold.ttf"),
+    MontserratLight: require("../../../assets/fonts/Montserrat-Light.ttf"),
     MontserratRegular: require("../../../assets/fonts/Montserrat-Regular.ttf"),
     MontserratMedium: require("../../../assets/fonts/Montserrat-Medium.ttf"),
     MontserratBold: require("../../../assets/fonts/Montserrat-Bold.ttf"),
@@ -77,7 +82,7 @@ const TxDetail = ({ navigation, route }) => {
         <Text style={styles.statusText}>{item.status}</Text>
         <View style={styles.statusIcon}>
           {item.value ? (
-            finalStatus == "REWORK" ? (
+            item.status == "Submitted" && finalStatus == "REWORK" ? (
               <Rework />
             ) : (
               <Done />
@@ -101,7 +106,7 @@ const TxDetail = ({ navigation, route }) => {
       else if (buttonName == "submit") status = "REVIEWING";
       else if (buttonName == "done") status = "DELIVERED";
       else if (buttonName == "rework") status = "REWORK";
-    }
+    } else setErrorMsg(true);
     setFinalStatus(status);
     setTxStatusState(status);
     setTxButtonPressed(false);
@@ -226,8 +231,16 @@ const TxDetail = ({ navigation, route }) => {
             </View>
           )}
           <Text style={styles.descTitle}>Status</Text>
-          {txItem.paymentMode == "deliver" ? (
-            <Text style={styles.desc}>Delivered</Text>
+          {txItem.paymentMode == "deliver" ||
+          finalStatus == "REJECTED" ||
+          finalStatus == "REFUNDED" ? (
+            <Text style={styles.desc}>
+              {finalStatus == "REJECTED" || finalStatus == "REFUNDED"
+                ? finalStatus == "REJECTED"
+                  ? "Rejected"
+                  : "Refunded"
+                : "Delivered"}
+            </Text>
           ) : (
             <View style={styles.statusView}>
               <View style={styles.statusSubView}>
@@ -246,6 +259,9 @@ const TxDetail = ({ navigation, route }) => {
           )}
 
           {renderButtonView()}
+          {errorMsg ? (
+            <Text style={styles.errorMsgStyle}>Please try again later.</Text>
+          ) : null}
         </View>
       ) : (
         <View style={{ marginTop: 25 }}>
@@ -358,6 +374,13 @@ const styles = StyleSheet.create({
     letterSpacing: 1.13,
     color: "#000000",
     width: 100,
+  },
+  errorMsgStyle: {
+    marginTop: 100,
+    fontFamily: "MontserratLight",
+    fontSize: 20,
+    alignSelf: "center",
+    textDecorationLine: "underline",
   },
 });
 

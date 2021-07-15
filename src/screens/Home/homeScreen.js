@@ -16,6 +16,7 @@ import SearchIcon from "../../images/icons/searchIcon.svg";
 import PromisesScreen from "./promisesScreen";
 import ReceivablesScreen from "./receivablesScreen";
 import { formatTxList } from "../../helpers/formatTxList";
+import { fetchTotalReceivables } from "../../helpers/fetchTotalReceivables";
 
 const HomeScreen = ({ navigation }) => {
   const [currentTab, setCurrentTab] = useState("promises");
@@ -23,6 +24,7 @@ const HomeScreen = ({ navigation }) => {
   const [promisesList, setPromisesList] = useState([]);
   const [receivablesList, setReceivablesList] = useState([]);
   const [listLoaded, setListLoaded] = useState(false);
+  const [totalReceivables, setTotalReceivables] = useState("");
 
   const [loaded] = useFonts({
     MontserratBold: require("../../../assets/fonts/Montserrat-Bold.ttf"),
@@ -33,6 +35,8 @@ const HomeScreen = ({ navigation }) => {
     const list = await formatTxList(JSON.parse(user.user.user));
     setPromisesList(list.promises);
     setReceivablesList(list.receivables);
+    const total = fetchTotalReceivables(list.receivables);
+    setTotalReceivables(total);
     setListLoaded(true);
   };
   useEffect(() => {
@@ -51,23 +55,33 @@ const HomeScreen = ({ navigation }) => {
       <StatusBar backgroundColor={"#000000"} />
       <View style={styles.header}>
         <View style={styles.headerTextView}>
-          <Text style={[styles.headerTitle, { marginTop: 21 }]}>
-            Will be Yours!
-          </Text>
-          <Text style={[styles.headerTitle, { marginTop: 15 }]}>₹ 25000</Text>
+          <Text style={[styles.headerTitle, { marginTop: 21 }]}>Total</Text>
+          {totalReceivables != "" ? (
+            <Text style={[styles.headerTitle, { marginTop: 15 }]}>
+              ₹ {totalReceivables}
+            </Text>
+          ) : (
+            <ActivityIndicator
+              style={{ marginTop: 15 }}
+              size={"small"}
+              color="#ffffff"
+            />
+          )}
         </View>
-        <TouchableOpacity
-          style={styles.searchIconView}
-          // onPress={() => navigation.push("Settings")}
-        >
-          <SearchIcon width={"100%"} height={"100%"} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.logoView}
-          onPress={() => navigation.push("Settings")}
-        >
-          <Logo width={"100%"} height={"100%"} />
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", left: 120 }}>
+          <TouchableOpacity
+            style={styles.searchIconView}
+            // onPress={() => navigation.push("Settings")}
+          >
+            <SearchIcon width={"100%"} height={"100%"} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.logoView}
+            onPress={() => navigation.push("Settings")}
+          >
+            <Logo width={"100%"} height={"100%"} />
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.tabView}>
         <TouchableOpacity
@@ -194,7 +208,7 @@ const styles = StyleSheet.create({
   currentTabView: {
     height: "83%",
     backgroundColor: "#ffffff",
-    marginTop: 20,
+    marginTop: 25,
     width: 320,
     alignSelf: "center",
     bottom: 10,

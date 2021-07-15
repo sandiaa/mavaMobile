@@ -14,9 +14,9 @@ export const txDetailButtonFunc = async (buttonName, item) => {
     case "done":
       const doneResult = await doneTx(item);
       return doneResult;
-    // case "rework":
-    //   const reworkResult = await submitTx(item);
-    //   return reworkResult;
+    case "rework":
+      const reworkResult = await reworkTx(item);
+      return reworkResult;
   }
 };
 
@@ -43,17 +43,17 @@ const acceptTx = async (item) => {
 const rejectTx = async (item) => {
   var rejected = Boolean();
   await axios
-    .post("/acceptTx", {
+    .post("/rejectTx", {
       id: item.txId,
       assetId: item.assetId,
       sender: item.receiverNumber,
     })
     .then(
       (res) => {
-        accepted = true;
+        rejected = true;
       },
       (err) => {
-        accepted = false;
+        rejected = false;
       }
     );
   return rejected;
@@ -94,4 +94,23 @@ const doneTx = async (item) => {
       }
     );
   return done;
+};
+const reworkTx = async (item) => {
+  var rework = Boolean();
+  await axios
+    .post("/reviewNotSuccess", {
+      id: item.txId,
+      assetId: item.assetId,
+      sender: item.senderNumber,
+      receiver: item.receiverNumber,
+    })
+    .then(
+      (res) => {
+        rework = true;
+      },
+      (err) => {
+        rework = false;
+      }
+    );
+  return rework;
 };

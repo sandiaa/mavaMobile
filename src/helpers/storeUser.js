@@ -5,7 +5,6 @@ const STORAGE_KEY = "@user";
 export const storeUser = async (name, number) => {
   try {
     const value = JSON.stringify({ name: name, number: number });
-    console.log(value);
     await AsyncStorage.setItem(STORAGE_KEY, value);
     return true;
   } catch (e) {

@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   itemSeperator: {
-    height: 18,
+    height: 12,
   },
   noPromises: {
     fontFamily: "MontserratBold",
